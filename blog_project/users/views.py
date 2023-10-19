@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 from .serializers import *
 
 @api_view(['POST'])
-def register_user(request):
+def user_register(request):
     if request.method == 'POST':
         serializer = CustomUserSerializer(data=request.data)
 
@@ -37,7 +37,6 @@ def user_login(request):
         if not user:
             user = authenticate(email=email, password=password)
             
-
         if user:
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
