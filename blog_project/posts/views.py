@@ -1,10 +1,5 @@
-from django.shortcuts import render
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import status
-from rest_framework import serializers
 from blog_project.utils import handle_get_request, handle_post_request, handle_update_request, handle_delete_request
 
 
