@@ -1,13 +1,16 @@
+from datetime import timezone
 from django.db import models
 from users.models import CustomUser
 
 
-# Модель категорий
 class Category(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
+    
+    def post_count(self):
+        return self.blogs.count() 
 
 class Post(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="blogs")
@@ -19,6 +22,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def publish(self):
+        self.save()
     
 
 

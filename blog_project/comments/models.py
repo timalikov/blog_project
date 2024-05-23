@@ -2,7 +2,7 @@ from django.db import models
 from posts.models import *
 from users.models import *
 
-# Модель комментариев
+
 class Comment(models.Model):
     blog = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="comments")

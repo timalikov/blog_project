@@ -1,6 +1,9 @@
+from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from blog_project.utils import handle_get_request, handle_post_request, handle_update_request, handle_delete_request
+from dramatiq_tasks import process_post_creation
+from rest_framework import status
 
 
 from .serializers import *
@@ -21,8 +24,14 @@ def get_all_posts(request):
 
 @api_view(['POST'])
 def create_post(request):
-    return handle_post_request(PostSerializer, request.data)
-
+    serializer = PostSerializer(data=request.data)
+    if serializer.is_valid():
+        post = serializer.save()  
+        process_post_creation.send(post.id)  
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 @api_view(['POST'])
 def update_post(request, pk):
     return handle_update_request(Post, PostSerializer, pk, request.data)
@@ -46,3 +55,9 @@ def update_category(request, pk):
 @api_view(['DELETE'])
 def delete_category(request, pk):
     return handle_delete_request(Category, pk)
+
+
+
+def post_list(request):
+    posts = Post.objects.all().order_by('-created_at')  
+    return render(request, 'blog/post_list.html', {'posts': posts})
